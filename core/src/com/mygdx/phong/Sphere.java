@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
-import com.sun.org.apache.xpath.internal.compiler.Keywords;
 
 
 public class Sphere {
@@ -45,6 +44,40 @@ public class Sphere {
         }
     }
 
+    // phong model
+    private int N = 1;
+    private float Ii = 1f;
+    private float Kd;
+
+    private float Ks;
+
+
+    private float Spectacular(ShapeRenderer s, Vector3 normal, Vector3 position, Vector3 reflected) {
+
+
+        Vector3 V = new Vector3(400,-1000,400).sub(position);
+
+        float alfa = angle(V.cpy(), reflected.cpy());
+
+        if(N%2==0)
+            N = (N+1);
+
+        // funkcja wygaszania odlelosci
+        float F =1;
+//        float F = (float) ((Math.pow(position.dst(lightPos),2)/100000000));
+//        if(F>1)
+//            F=1;
+//        F=1f-F;
+
+        float I = (float) (Ii * F * Math.pow(MathUtils.cosDeg(alfa), N));
+
+        float alpha = I;
+
+        s.setColor(alpha, alpha, alpha, 1);
+
+        return I;
+    }
+
 
     public void draw2D(ShapeRenderer s) {
 
@@ -52,34 +85,66 @@ public class Sphere {
         for (int i = 0; i < 800; i++) {
             for (int j = 0; j < 800; j++) {
                 if (normalVectors[i][j] != null) {
-                    float alpha = angle(cam, normalVectors[i][j]) / 180f;
+
+                    Vector3 normal = normalVectors[i][j].cpy();
+                    Vector3 pos = normal.cpy().add(400, 400, 400);
+                    Vector3 reflected = reflect(
+                            lightPos.cpy().sub(pos),
+                            normal.cpy()
+                    );
+
+                    float alpha;
 
 
-                    s.setColor(alpha, alpha, alpha, 1);
+
+                    alpha = Spectacular(s,normal.cpy(), pos.cpy(), reflected.cpy());
+
+                    //s.setColor(alpha, alpha, alpha, 1);
+
+
                     s.rect(j, i, 1, 1);
+
                 }
             }
+
         }
+        s.setColor(Color.RED);
+        s.circle(400+400/30f,400+400/30f,5);
+        s.circle(lightPos.x/30f+400,+lightPos.y/30f+400,5);
+
 
         //println(System.currentTimeMillis() - time);
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 
-            cam = cam.add(-50, 0, 0);
+            lightPos = lightPos.add(-moveSpeed, 0, 0);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 
-            cam = cam.add(50, 0, 0);
+            lightPos = lightPos.add(moveSpeed, 0, 0);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 
-            cam = cam.add(0, 0, -50);
+            lightPos = lightPos.add(0, 0, -moveSpeed);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 
-            cam = cam.add(0, 0, 50);
+            lightPos = lightPos.add(0, 0, moveSpeed);
         }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
+
+            lightPos = lightPos.add(0, -moveSpeed, 0);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+
+            lightPos = lightPos.add(0, moveSpeed, 0);
+        }
+
+
     }
+
+    private int moveSpeed = -200;
 
     static float max = 0f;
 
@@ -101,7 +166,14 @@ public class Sphere {
     Ray ray = new Ray();
     Vector3 intersection = new Vector3();
 
-    Vector3 cam = new Vector3(0, 1000, 0);
+    Vector3 lightPos = new Vector3(400, -1000, 400);
+
+
+    private Vector3 reflect(Vector3 vec, Vector3 normal) {
+        normal.nor();
+        return normal.scl((float) (normal.dot(vec) * 2)).sub(vec);
+    }
+
 
     private float angle(Vector3 a, Vector3 b) {
 
