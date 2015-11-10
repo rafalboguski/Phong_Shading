@@ -45,37 +45,54 @@ public class Sphere {
     }
 
     // phong model
-    private int N = 1;
+
+
+    private float Ia = 1f;
+    private float Ka = 0.1f;
+
     private float Ii = 1f;
-    private float Kd;
 
-    private float Ks;
+    private float Kd = 0.4f;
 
+    private int N = 50;
+    private float Ks = 0.5f;
+
+
+    private float Ambient() {
+
+        return Ia * Ka;
+    }
+
+    private float Diffuse(Vector3 reflected, Vector3 normal) {
+
+        float beta = angle(reflected, normal);
+
+        float Id = Kd * Ii * MathUtils.cosDeg(beta);
+
+        return (Id > 0) ? Id : 0;
+    }
 
     private float Spectacular(ShapeRenderer s, Vector3 normal, Vector3 position, Vector3 reflected) {
 
 
-        Vector3 V = new Vector3(400,-1000,400).sub(position);
+        Vector3 V = new Vector3(400, -1000, 400).sub(position);
 
         float alfa = angle(V.cpy(), reflected.cpy());
 
-        if(N%2==0)
-            N = (N+1);
+        if (N % 2 == 0)
+            N = (N + 1);
 
         // funkcja wygaszania odlelosci
-        float F =1;
+        float F = 1;
 //        float F = (float) ((Math.pow(position.dst(lightPos),2)/100000000));
 //        if(F>1)
 //            F=1;
 //        F=1f-F;
 
-        float I = (float) (Ii * F * Math.pow(MathUtils.cosDeg(alfa), N));
+        float I = (float) (Ks * Ii * F * Math.pow(MathUtils.cosDeg(alfa), N));
 
-        float alpha = I;
 
-        s.setColor(alpha, alpha, alpha, 1);
-
-        return I;
+        return (I > 0) ? I : 0;
     }
 
 
@@ -93,14 +110,13 @@ public class Sphere {
                             normal.cpy()
                     );
 
-                    float alpha;
 
+                    float alpha = Ambient() + Diffuse(reflected,normal) + Spectacular(s, normal.cpy(), pos.cpy(), reflected.cpy());
 
+                    if (alpha > 1)
+                        alpha = 1;
 
-                    alpha = Spectacular(s,normal.cpy(), pos.cpy(), reflected.cpy());
-
-                    //s.setColor(alpha, alpha, alpha, 1);
-
+                    s.setColor(alpha, alpha, alpha, 1);
 
                     s.rect(j, i, 1, 1);
 
@@ -109,8 +125,8 @@ public class Sphere {
 
         }
         s.setColor(Color.RED);
-        s.circle(400+400/30f,400+400/30f,5);
-        s.circle(lightPos.x/30f+400,+lightPos.y/30f+400,5);
+        s.circle(400 + 400 / 30f, 400 + 400 / 30f, 5);
+        s.circle(lightPos.x / 30f + 400, +lightPos.y / 30f + 400, 5);
 
 
         //println(System.currentTimeMillis() - time);
@@ -143,6 +159,7 @@ public class Sphere {
 
 
     }
+
 
     private int moveSpeed = -200;
 
