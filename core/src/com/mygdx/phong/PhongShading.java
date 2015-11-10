@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.particles.influencers.ColorInfluencer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 
+import java.awt.*;
 import java.util.Random;
 
 public class PhongShading extends ApplicationAdapter {
@@ -24,23 +26,26 @@ public class PhongShading extends ApplicationAdapter {
         H = Gdx.graphics.getHeight();
 
         s = new ShapeRenderer();
-
+        b = new SpriteBatch();
         c = new OrthographicCamera(W, H);
         c.position.set(W / 2f, H / 2f, 0);
-        c.zoom = 1.2f;
+        c.zoom = 0.5f;
         c.update();
-        sphere = new Sphere();
 
+        sphere = new Sphere();
+        font = new BitmapFont();
     }
 
     int W;
     int H;
 
     ShapeRenderer s;
+    SpriteBatch b;
     OrthographicCamera c;
 
     Sphere sphere;
 
+    BitmapFont font;
 
     @Override
     public void render() {
@@ -51,12 +56,20 @@ public class PhongShading extends ApplicationAdapter {
 
         s.setColor(Color.WHITE);
         s.setProjectionMatrix(c.combined);
-        s.begin(ShapeRenderer.ShapeType.Point);
+        s.begin(ShapeRenderer.ShapeType.Filled);
 
         sphere.draw2D(s);
 
-
         s.end();
+
+
+
+        b.begin();
+        font.setColor(Color.RED);
+
+        font.draw(b, "" + Gdx.graphics.getFramesPerSecond(), 6, H-10);
+
+        b.end();
 
 
     }

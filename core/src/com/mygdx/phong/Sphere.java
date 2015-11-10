@@ -16,8 +16,10 @@ public class Sphere {
 
     public Sphere() {
 
-        this.R = 400;
+        this.R = 150;
         this.pos2D = new Vector2(400, 400);
+
+        populateNormalVectors();
 
     }
 
@@ -25,80 +27,90 @@ public class Sphere {
     public float R;
 
 
-    public void draw2D(ShapeRenderer s) {
+    private Vector3 normalVectors[][] = new Vector3[800][800];
 
-
+    public void populateNormalVectors() {
         for (int i = 0; i < 800; i++) {
             for (int j = 0; j < 800; j++) {
-                float dst = new Vector2(j, i).dst(pos2D);
+
+                float dst = Vector2.dst(j, i, pos2D.x, pos2D.y);
                 if (dst < R) {
-                    float alpha = calc(j / 800f, i / 800f);
-                    if (alpha > max)
-                        max = alpha;
-
-                    s.setColor(new Color(alpha, alpha, alpha, 1));
-                    s.point(j, i, 0);
-
+                    normalVectors[i][j] = normalVector(j / (2 * R), i / (2 * R));
+                } else {
+                    normalVectors[i][j] = null;
                 }
-               // println(max);
+
             }
 
         }
+    }
 
-        if(Gdx.input.isKeyPressed(Input.Keys.D)){
-            println("sdf");
-            cam = cam.add(-10,0,0);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.A)){
-            println("sdf");
-            cam = cam.add(10,0,0);
+
+    public void draw2D(ShapeRenderer s) {
+
+        //long time = System.currentTimeMillis();
+        for (int i = 0; i < 800; i++) {
+            for (int j = 0; j < 800; j++) {
+                if (normalVectors[i][j] != null) {
+                    float alpha = angle(cam, normalVectors[i][j]) / 180f;
+
+
+                    s.setColor(alpha, alpha, alpha, 1);
+                    s.rect(j, i, 1, 1);
+                }
+            }
         }
 
-        if(Gdx.input.isKeyPressed(Input.Keys.Q)){
-            println("sdf");
-            cam = cam.add(0,-10,0);
+        //println(System.currentTimeMillis() - time);
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+
+            cam = cam.add(-50, 0, 0);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.E)){
-            println("sdf");
-            cam = cam.add(0,10,0);
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+
+            cam = cam.add(50, 0, 0);
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+
+            cam = cam.add(0, 0, -50);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+
+            cam = cam.add(0, 0, 50);
         }
     }
 
     static float max = 0f;
 
-    private float calc(float x, float y) {
-        com.badlogic.gdx.math.collision.Sphere sp = new com.badlogic.gdx.math.collision.Sphere(new Vector3(0, 0, 0), R);
 
-        x *= 800;
-        y *= 800;
+    private Vector3 normalVector(float x, float y) {
 
-        Vector3 intersection = new Vector3();
-        Ray ray = new Ray(new Vector3(x, -10000, y), new Vector3(0, 1000, 0));
+        x *= 2 * R;
+        y *= 2 * R;
 
+        ray = new Ray(new Vector3(x, -1000, y), new Vector3(0, 1000, 0));
 
-        ray.getEndPoint(intersection, 100);
-
-        Intersector.intersectRaySphere(ray, new Vector3(400, 400, 400), 400, intersection);
+        Intersector.intersectRaySphere(ray, new Vector3(400, 400, 400), R, intersection);
         intersection.sub(400, 400, 400);
 
-        //Vector3 cam = new Vector3(1000, 1000, 0);
-        return angle(cam,intersection)/180f;
-
-        //return intersection.len() / 1043.5583f;
-
+        return intersection.cpy();
 
     }
+
+    Ray ray = new Ray();
+    Vector3 intersection = new Vector3();
 
     Vector3 cam = new Vector3(0, 1000, 0);
 
     private float angle(Vector3 a, Vector3 b) {
 
-        double aNorm = Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
-        double bNorm = Math.sqrt(b.x * b.x + b.y * b.y + b.z * b.z);
+        float aNorm = (float) Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
+        float bNorm = (float) Math.sqrt(b.x * b.x + b.y * b.y + b.z * b.z);
 
-        double angle = Math.acos(a.dot(b) / (aNorm * bNorm)) * MathUtils.radiansToDegrees;
+        float angle = (float) (Math.acos(a.dot(b) / (aNorm * bNorm)) * MathUtils.radiansToDegrees);
 
-        return (float) angle;
+        return angle;
 
     }
 
