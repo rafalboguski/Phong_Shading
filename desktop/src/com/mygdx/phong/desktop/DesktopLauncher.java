@@ -2,7 +2,7 @@ package com.mygdx.phong.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.mygdx.phong.PhongShading;
+import com.mygdx.phong.Renderer;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -12,6 +12,6 @@ public class DesktopLauncher {
 		config.height = 800;
 
 
-		new LwjglApplication(new PhongShading(), config);
+		new LwjglApplication(new Renderer(), config);
 	}
 }

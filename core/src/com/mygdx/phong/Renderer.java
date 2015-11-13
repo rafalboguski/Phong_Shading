@@ -17,7 +17,7 @@ import com.badlogic.gdx.math.collision.Ray;
 import java.awt.*;
 import java.util.Random;
 
-public class PhongShading extends ApplicationAdapter {
+public class Renderer extends ApplicationAdapter {
 
     @Override
     public void create() {
@@ -29,7 +29,7 @@ public class PhongShading extends ApplicationAdapter {
         b = new SpriteBatch();
         c = new OrthographicCamera(W, H);
         c.position.set(W / 2f, H / 2f, 0);
-        c.zoom = 0.5f;
+        c.zoom = 1f;
         c.update();
 
         sphere = new Sphere();
@@ -49,10 +49,11 @@ public class PhongShading extends ApplicationAdapter {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0.3f, 0.3f, 0.3f, 1);
+        Gdx.gl.glClearColor(0.05f, 0.05f,0.05f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         c.update();
+        sphere.update();
 
         s.setColor(Color.WHITE);
         s.setProjectionMatrix(c.combined);
@@ -61,8 +62,6 @@ public class PhongShading extends ApplicationAdapter {
         sphere.draw2D(s);
 
         s.end();
-
-
 
         b.begin();
         font.setColor(Color.RED);
