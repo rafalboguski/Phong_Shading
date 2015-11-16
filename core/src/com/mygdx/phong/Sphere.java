@@ -44,11 +44,14 @@ public class Sphere {
                             + PhongModel.Diffuse(reflected, normal)
                             + PhongModel.Spectacular(s, normal.cpy(), pos.cpy(), reflected.cpy());
 
+
+                    if (alpha < 0)
+                        alpha = 0;
                     if (alpha > 1)
                         alpha = 1;
 
-                    else
-                    s.setColor(alpha, 0, 0, 1);
+
+                    s.setColor(alpha, alpha, alpha, 1);
                     s.rect(j, i, 1, 1);
                 }
             }
@@ -62,9 +65,7 @@ public class Sphere {
         s.circle(40 + 400 / 30f, 40 + 400 / 30f, 5);
         s.circle(lightPos.x / 30f + 40, +lightPos.y / 30f + 40, 5);
 
-        lightPos = StoC(new Vector3(600,0,an+=15)).add(center);
 
-        bn++;
 
     }
 
@@ -75,34 +76,49 @@ public class Sphere {
     public void update(){
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 
-            lightPos = lightPos.add(-moveSpeed, 0, 0);
+            lightPos = lightPos.add(-lightMoveSpeed, 0, 0);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 
-            lightPos = lightPos.add(moveSpeed, 0, 0);
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-
-            lightPos = lightPos.add(0, 0, -moveSpeed);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-
-            lightPos = lightPos.add(0, 0, moveSpeed);
+            lightPos = lightPos.add(lightMoveSpeed, 0, 0);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
 
-            lightPos = lightPos.add(0, -moveSpeed, 0);
+            lightPos = lightPos.add(0, 0, -lightMoveSpeed);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.X)) {
 
-            lightPos = lightPos.add(0, moveSpeed, 0);
+            lightPos = lightPos.add(0, 0, lightMoveSpeed);
         }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+
+            lightPos = lightPos.add(0, -lightMoveSpeed, 0);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+
+            lightPos = lightPos.add(0, lightMoveSpeed, 0);
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.F1)) {
+
+            LIGHT_ROTATE = false;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.F2)) {
+
+            LIGHT_ROTATE = true;
+        }
+
+        if (LIGHT_ROTATE)
+            lightPos = StoC(new Vector3(600, 0, an += 2)).add(center);
+
+        bn++;
+
     }
 
-
-    private int moveSpeed = -200;
+    private boolean LIGHT_ROTATE = true;
+    private int lightMoveSpeed = -60;
 
 
     private Vector3 normalVectors[][] = new Vector3[800][800];

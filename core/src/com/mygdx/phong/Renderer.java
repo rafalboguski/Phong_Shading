@@ -2,10 +2,8 @@ package com.mygdx.phong;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.particles.influencers.ColorInfluencer;
@@ -52,8 +50,10 @@ public class Renderer extends ApplicationAdapter {
         Gdx.gl.glClearColor(0.05f, 0.05f,0.05f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+
         c.update();
         sphere.update();
+        PhongModel.update();
 
         s.setColor(Color.WHITE);
         s.setProjectionMatrix(c.combined);
@@ -66,7 +66,9 @@ public class Renderer extends ApplicationAdapter {
         b.begin();
         font.setColor(Color.RED);
 
-        font.draw(b, "" + Gdx.graphics.getFramesPerSecond(), 6, H-10);
+        font.draw(b, "FPS:" + Gdx.graphics.getFramesPerSecond(), 6, H-10);
+
+        PhongModel.drawInfo(b, font,W,H);
 
         b.end();
 

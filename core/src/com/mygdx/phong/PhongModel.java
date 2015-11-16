@@ -1,8 +1,13 @@
 package com.mygdx.phong;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.sun.org.apache.xpath.internal.operations.String;
 
 import static com.mygdx.phong.VectorMath.angle;
 
@@ -58,4 +63,74 @@ public class PhongModel {
     }
 
 
+    public static void update(){
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
+            N+=2;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+            N-=2;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+            Ka+=0.01f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.F)) {
+            Ka-=0.01f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.T)) {
+            Kd+=0.01f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.G)) {
+            Kd-=0.01f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.Y)) {
+            Ks+=0.01f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.H)) {
+            Ks-=0.01f;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
+            Ia+=0.1f;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.J)) {
+            Ia-=0.1f;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+            Ii+=0.1f;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
+            Ii-=0.1f;
+        }
+
+        if (N < 0)
+            N = 0;
+        if (Ka < 0)
+            Ka = 0;
+        if (Kd < 0)
+            Kd = 0;
+        if (Ks < 0)
+            Ks = 0;
+
+        if (Ka > 1)
+            Ka = 1;
+        if (Kd > 1)
+            Kd = 1;
+        if (Ks > 1)
+            Ks = 1;
+
+        if (Ia < 0)
+            Ia = 0;
+        if (Ii < 0)
+            Ii = 0;
+    }
+
+    public static void drawInfo(SpriteBatch b, BitmapFont font, int W, int H) {
+
+
+        font.draw(b,"N = "+N+"   Ka = "+Ka+"   Kd = "+Kd+"   Ks = "+Ks+"      Ia = "+Ia+"   Ii = "+Ii+"   Keys   R->O   F->L"
+
+                ,100,H-10);
+    }
 }
